@@ -1,0 +1,10 @@
+# Directories
+.idea
+consumer/temp
+publisher/temp
+
+# Files
+.DS_Store
+.env
+consumer/.env
+publisher/.env
