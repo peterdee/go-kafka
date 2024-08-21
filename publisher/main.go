@@ -1,38 +1,25 @@
 package main
 
 import (
-	"context"
 	"log"
-	"time"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/segmentio/kafka-go"
 
-	"go-kafka-publisher/constants"
+	"go-kafka-publisher/broker"
 )
 
 func main() {
-	connection, connectionError := kafka.DialLeader(
-		context.Background(),
-		"tcp",
-		"localhost:9092",
-		constants.DEFAULT_TOPIC_NAME,
-		0,
-	)
+	if envError := godotenv.Load(); envError != nil {
+		log.Fatal("Could not load .env file!")
+	}
+
+	_, connectionError := broker.CreateConnection(os.Getenv("BROKER_ADDRESS"))
 	if connectionError != nil {
-		log.Fatal("failed to dial leader:", connectionError)
+		log.Fatal(connectionError)
 	}
 
-	connection.SetWriteDeadline(time.Now().Add(10 * time.Second))
-	_, writeError := connection.WriteMessages(
-		kafka.Message{Value: []byte("one!")},
-		kafka.Message{Value: []byte("two!")},
-		kafka.Message{Value: []byte("three!")},
-	)
-	if writeError != nil {
-		log.Fatal("failed to write messages:", writeError)
-	}
-
-	if closeError := connection.Close(); closeError != nil {
-		log.Fatal("failed to close writer:", closeError)
-	}
+	broker.WriteMessages(kafka.Message{Key: []byte("testkey"), Value: []byte("test")})
+	broker.CloseConnection()
 }
