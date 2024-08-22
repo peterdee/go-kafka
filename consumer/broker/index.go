@@ -29,7 +29,7 @@ func CloseConnection() error {
 	return nil
 }
 
-func CreateConnection(address string) (*kafka.Conn, error) {
+func CreateConnection(address string) error {
 	var connectionError error
 	for i := 1; i <= 5; i += 1 {
 		Connection, connectionError = kafka.DialLeader(
@@ -52,7 +52,7 @@ func CreateConnection(address string) (*kafka.Conn, error) {
 
 	Connection.SetReadDeadline(time.Now().Add(10 * time.Second))
 
-	return Connection, connectionError
+	return connectionError
 }
 
 func ReadMessages() error {

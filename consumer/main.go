@@ -1,11 +1,13 @@
 package main
 
 import (
-	"go-kafka-consumer/broker"
 	"log"
 	"os"
 
 	"github.com/joho/godotenv"
+
+	"go-kafka-consumer/broker"
+	"go-kafka-consumer/constants"
 )
 
 func main() {
@@ -13,9 +15,11 @@ func main() {
 		log.Fatal("Could not load .env file!")
 	}
 
-	_, connectionError := broker.CreateConnection(os.Getenv("BROKER_ADDRESS"))
-	if connectionError != nil {
-		log.Fatal(connectionError)
+	brokerError := broker.CreateConnection(
+		os.Getenv(constants.ENV_NAMES.BrokerAddress),
+	)
+	if brokerError != nil {
+		log.Fatal(brokerError)
 	}
 
 	broker.ReadMessages()

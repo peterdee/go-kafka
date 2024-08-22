@@ -8,6 +8,7 @@ import (
 	"github.com/segmentio/kafka-go"
 
 	"go-kafka-publisher/broker"
+	"go-kafka-publisher/constants"
 )
 
 func main() {
@@ -15,9 +16,11 @@ func main() {
 		log.Fatal("Could not load .env file!")
 	}
 
-	_, connectionError := broker.CreateConnection(os.Getenv("BROKER_ADDRESS"))
-	if connectionError != nil {
-		log.Fatal(connectionError)
+	brokerError := broker.CreateConnection(
+		os.Getenv(constants.ENV_NAMES.BrokerAddress),
+	)
+	if brokerError != nil {
+		log.Fatal(brokerError)
 	}
 
 	broker.WriteMessages(kafka.Message{Key: []byte("testkey"), Value: []byte("test")})
