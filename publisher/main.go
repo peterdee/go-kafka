@@ -1,14 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
+	"github.com/gofiber/fiber/v3/middleware/favicon"
+	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/joho/godotenv"
-	"github.com/segmentio/kafka-go"
 
+	eventsAPIs "go-kafka-publisher/apis/events"
+	indexAPIs "go-kafka-publisher/apis/index"
 	"go-kafka-publisher/broker"
 	"go-kafka-publisher/constants"
+	"go-kafka-publisher/utilities"
 )
 
 func main() {
@@ -16,13 +23,19 @@ func main() {
 		log.Fatal("Could not load .env file!")
 	}
 
-	brokerError := broker.CreateConnection(
-		os.Getenv(constants.ENV_NAMES.BrokerAddress),
-	)
-	if brokerError != nil {
-		log.Fatal(brokerError)
-	}
+	broker.CreateWriter(os.Getenv(constants.ENV_NAMES.BrokerAddress))
 
-	broker.WriteMessages(kafka.Message{Key: []byte("testkey"), Value: []byte("test")})
-	broker.CloseConnection()
+	app := fiber.New(fiber.Config{ErrorHandler: utilities.GlobalErrorHandler})
+
+	app.Use(cors.New())
+	app.Use(favicon.New(favicon.Config{
+		File: "./static/favicon.ico",
+	}))
+	app.Use(logger.New())
+
+	eventsAPIs.Initialize(app)
+	indexAPIs.Initialize(app)
+
+	port := utilities.GetEnv(constants.ENV_NAMES.Port, constants.DEFAULT_PORT)
+	app.Listen(fmt.Sprintf(":%s", port))
 }

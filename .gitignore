@@ -1,7 +1,7 @@
 # Directories
 .idea
-consumer/temp
-publisher/temp
+consumer/tmp
+publisher/tmp
 
 # Files
 .DS_Store
