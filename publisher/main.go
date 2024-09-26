@@ -19,11 +19,15 @@ import (
 )
 
 func main() {
-	if envError := godotenv.Load(); envError != nil {
-		log.Fatal("Could not load .env file!")
+	envSource := os.Getenv(constants.ENV_NAMES.ENV_SOURCE)
+	if envSource != "env" {
+		envError := godotenv.Load()
+		if envError != nil {
+			log.Fatal("Could not load .env file!")
+		}
 	}
 
-	broker.CreateWriter(os.Getenv(constants.ENV_NAMES.BrokerAddress))
+	broker.CreateWriter(os.Getenv(constants.ENV_NAMES.BROKER_ADDRESS))
 
 	app := fiber.New(fiber.Config{ErrorHandler: utilities.GlobalErrorHandler})
 
@@ -36,6 +40,8 @@ func main() {
 	eventsAPIs.Initialize(app)
 	indexAPIs.Initialize(app)
 
-	port := utilities.GetEnv(constants.ENV_NAMES.Port, constants.DEFAULT_PORT)
+	utilities.GracefulShutdown()
+
+	port := utilities.GetEnv(constants.ENV_NAMES.PORT, constants.DEFAULT_PORT)
 	app.Listen(fmt.Sprintf(":%s", port))
 }

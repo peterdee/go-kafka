@@ -12,7 +12,7 @@ import (
 )
 
 func eventsController(context fiber.Ctx) error {
-	event := new(ClientEvent)
+	event := new(clientEvent)
 	if bindError := context.Bind().Body(event); bindError != nil {
 		return fiber.NewError(
 			fiber.StatusBadRequest,

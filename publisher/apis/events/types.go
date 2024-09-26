@@ -1,6 +1,6 @@
 package events
 
-type ClientEvent struct {
+type clientEvent struct {
 	EventTarget string `json:"eventTarget"`
 	EventType   string `json:"eventType"`
 }

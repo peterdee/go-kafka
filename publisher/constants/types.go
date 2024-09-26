@@ -1,8 +1,9 @@
 package constants
 
 type EnvNames struct {
-	BrokerAddress string
-	Port          string
+	BROKER_ADDRESS string
+	ENV_SOURCE     string
+	PORT           string
 }
 
 type ResponseInfo struct {

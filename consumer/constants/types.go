@@ -1,5 +1,6 @@
 package constants
 
 type EnvNames struct {
-	BrokerAddress string
+	BROKER_ADDRESS string
+	ENV_SOURCE     string
 }

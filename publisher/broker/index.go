@@ -2,6 +2,7 @@ package broker
 
 import (
 	"context"
+	"time"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -10,8 +11,9 @@ var Writer *kafka.Writer
 
 func CreateWriter(address string) {
 	Writer = &kafka.Writer{
-		Addr:     kafka.TCP(address),
-		Balancer: &kafka.LeastBytes{},
+		Addr:         kafka.TCP(address),
+		Balancer:     &kafka.LeastBytes{},
+		BatchTimeout: 10 * time.Millisecond,
 	}
 
 	Writer.AllowAutoTopicCreation = true
